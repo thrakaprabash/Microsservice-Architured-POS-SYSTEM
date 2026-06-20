@@ -27,11 +27,26 @@ const stockAuth = (req, res, next) => {
   return protect(req, res, () => adminOnly(req, res, next));
 };
 
-// GET /products  – any authenticated user
-router.get('/', protect, getAllProducts);
+/**
+ * serviceOrProtect – accepts EITHER:
+ *   1. A valid x-service-secret header (internal microservice call), OR
+ *   2. A valid JWT (cookie or Authorization header)
+ */
+const serviceOrProtect = (req, res, next) => {
+  if (
+    req.headers['x-service-secret'] &&
+    req.headers['x-service-secret'] === process.env.INTERNAL_SERVICE_SECRET
+  ) {
+    return next();
+  }
+  return protect(req, res, next);
+};
 
-// GET /products/:id  – any authenticated user
-router.get('/:id', protect, getProductById);
+// GET /products  – any authenticated user or internal service
+router.get('/', serviceOrProtect, getAllProducts);
+
+// GET /products/:id  – any authenticated user or internal service
+router.get('/:id', serviceOrProtect, getProductById);
 
 // POST /products  – admin only
 router.post('/', protect, adminOnly, createProduct);

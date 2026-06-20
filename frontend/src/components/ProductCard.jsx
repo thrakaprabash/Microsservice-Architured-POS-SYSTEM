@@ -19,10 +19,14 @@ function formatLKR(amount) {
 }
 
 function StockBadge({ stock }) {
-  const baseClasses = "inline-block px-2.5 py-1 text-xs font-semibold rounded-full border border-current bg-opacity-10 backdrop-blur-md"
-  if (stock === 0) return <span className={`${baseClasses} text-[var(--color-accent-danger)] bg-[var(--color-accent-danger)]`}>Out of Stock</span>
-  if (stock <= 10) return <span className={`${baseClasses} text-[var(--color-accent-secondary)] bg-[var(--color-accent-secondary)]`}>Low: {stock}</span>
-  return <span className={`${baseClasses} text-[var(--color-accent-primary)] bg-[var(--color-accent-primary)]`}>{stock} in stock</span>
+  const baseClasses = "w-full text-center py-1.5 text-xs font-bold rounded-full transition-all"
+  if (stock === 0) {
+    return <div className={`${baseClasses} bg-[var(--color-accent-danger)] bg-opacity-20 text-[var(--color-accent-danger)] border border-[var(--color-accent-danger)]`}>Out of Stock</div>
+  }
+  if (stock <= 10) {
+    return <div className={`${baseClasses} bg-[var(--color-accent-secondary)] bg-opacity-20 text-[var(--color-accent-secondary)] border border-[var(--color-accent-secondary)]`}>Low Stock: {stock}</div>
+  }
+  return <div className={`${baseClasses} bg-[var(--color-accent-primary)] text-white shadow-[0_4px_12px_rgba(16,185,129,0.25)]`}>{stock} in stock</div>
 }
 
 export default function ProductCard({ product, adminMode = false, onEdit, onDelete }) {

@@ -1,7 +1,7 @@
 import api from './axios'
 
 export const createPaymentIntent = (orderId, amount) =>
-  api.post('/payments/create-intent', { orderId, amount })
+  api.post('/payments/intent', { orderId, amount })
 
 export const confirmPayment = (paymentIntentId) =>
   api.post('/payments/confirm', { paymentIntentId })

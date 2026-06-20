@@ -10,8 +10,8 @@ const {
   getWeeklyStats,
 } = require('../controllers/order.controller');
 
-// Stats auth: accept internal service secret OR JWT
-const statsAuth = (req, res, next) => {
+// Auth: accept internal service secret OR JWT
+const serviceOrProtect = (req, res, next) => {
   if (req.headers['x-service-secret'] === process.env.INTERNAL_SERVICE_SECRET) {
     return next();
   }
@@ -19,12 +19,12 @@ const statsAuth = (req, res, next) => {
 };
 
 // IMPORTANT: stats routes registered BEFORE /:id to avoid conflicts
-router.get('/stats/daily', statsAuth, getDailyStats);
-router.get('/stats/weekly', statsAuth, getWeeklyStats);
+router.get('/stats/daily', serviceOrProtect, getDailyStats);
+router.get('/stats/weekly', serviceOrProtect, getWeeklyStats);
 
 router.post('/', protect, createOrder);
 router.get('/', protect, getOrders);
 router.get('/:id', protect, getOrderById);
-router.patch('/:id/status', protect, updateOrderStatus);
+router.patch('/:id/status', serviceOrProtect, updateOrderStatus);
 
 module.exports = router;

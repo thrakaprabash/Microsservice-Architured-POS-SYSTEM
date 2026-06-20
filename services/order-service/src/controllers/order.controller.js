@@ -32,9 +32,10 @@ exports.createOrder = async (req, res, next) => {
         const response = await productServiceClient.get(
           `${process.env.PRODUCT_SERVICE_URL}/products/${productId}`
         );
-        product = response.data.data;
+        product = response.data.data.product;
       } catch (e) {
-        const err = new Error(`Product ${productId} not found or unavailable`);
+        console.error('Error fetching product:', e.message, e.response?.data);
+        const err = new Error(`Product ${productId} not found or unavailable. Reason: ${e.message}`);
         err.statusCode = 400;
         return next(err);
       }
@@ -97,15 +98,30 @@ exports.createOrder = async (req, res, next) => {
     }
 
     // Create order
-    const order = await Order.create({
-      cashier: { id: req.user.id, name: req.user.name },
-      items: enrichedItems,
-      subtotal,
-      tax,
-      discount,
-      total,
-      notes,
-    });
+    let order;
+    try {
+      order = await Order.create({
+        cashier: { id: req.user.id, name: req.user.name },
+        items: enrichedItems,
+        subtotal,
+        tax,
+        discount,
+        total,
+        notes,
+      });
+    } catch (dbErr) {
+      // Rollback stock updates if order creation fails
+      for (const updatedId of stockUpdates) {
+        const rollbackItem = enrichedItems.find(i => i.productId === updatedId);
+        await productServiceClient
+          .patch(`${process.env.PRODUCT_SERVICE_URL}/products/${updatedId}/stock`, {
+            quantity: rollbackItem.quantity,
+            operation: 'add',
+          })
+          .catch(() => {}); // ignore rollback errors
+      }
+      return next(dbErr);
+    }
 
     res.status(201).json({
       success: true,

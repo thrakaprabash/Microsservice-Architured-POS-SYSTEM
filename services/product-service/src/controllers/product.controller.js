@@ -120,7 +120,7 @@ const createProduct = async (req, res, next) => {
  */
 const updateProduct = async (req, res, next) => {
   try {
-    const allowedFields = ['name', 'description', 'price', 'category', 'barcode', 'image', 'isActive', 'unit', 'sku'];
+    const allowedFields = ['name', 'description', 'price', 'category', 'barcode', 'image', 'isActive', 'unit', 'sku', 'stock'];
     const updates = {};
     allowedFields.forEach((field) => {
       if (req.body[field] !== undefined) updates[field] = req.body[field];
@@ -147,15 +147,11 @@ const updateProduct = async (req, res, next) => {
 
 /**
  * DELETE /products/:id
- * Soft-delete a product by setting isActive = false. Admin only.
+ * Delete a product permanently. Admin only.
  */
 const deleteProduct = async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      { isActive: false },
-      { new: true }
-    );
+    const product = await Product.findByIdAndDelete(req.params.id);
 
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found.' });
@@ -164,7 +160,7 @@ const deleteProduct = async (req, res, next) => {
     return res.json({
       success: true,
       data: null,
-      message: 'Product deactivated (soft-deleted) successfully.',
+      message: 'Product deleted successfully.',
     });
   } catch (err) {
     next(err);

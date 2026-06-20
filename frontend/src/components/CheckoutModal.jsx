@@ -85,12 +85,17 @@ export default function CheckoutModal({ onClose, onSuccess }) {
   const [createdOrder, setCreatedOrder] = useState(null)
   const [clientSecret, setClientSecret] = useState(null)
 
+  const orderCreatedRef = React.useRef(false)
+
   // Create order on mount
   useEffect(() => {
+    if (orderCreatedRef.current) return
+    orderCreatedRef.current = true
+
     const createTheOrder = async () => {
       try {
         const orderData = {
-          items: items.map(i => ({ product: i.productId, quantity: i.quantity, price: i.price })),
+          items: items.map(i => ({ productId: i.productId, quantity: i.quantity, price: i.price })),
           total,
           cashier: user?._id
         }
