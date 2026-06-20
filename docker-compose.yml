@@ -6,33 +6,10 @@ networks:
     name: pos-network
 
 # ─── Volumes ──────────────────────────────────────────────────────────────────
-volumes:
-  mongodb-data:
-    driver: local
+# Volumes intentionally left empty as we use the host's MongoDB
 
 # ─── Services ─────────────────────────────────────────────────────────────────
 services:
-
-  # ── MongoDB (single instance, multiple databases) ────────────────────────────
-  mongodb:
-    image: mongo:7.0
-    container_name: pos-mongodb
-    restart: unless-stopped
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb-data:/data/db
-      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    environment:
-      MONGO_INITDB_DATABASE: pos-auth
-    networks:
-      - pos-network
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
 
   # ── Auth Service (port 4001) ─────────────────────────────────────────────────
   auth-service:
@@ -45,14 +22,11 @@ services:
       - "4001:4001"
     environment:
       PORT: 4001
-      MONGODB_URI: mongodb://mongodb:27017/pos-auth
+      MONGODB_URI: mongodb://host.docker.internal:27017/pos-auth
       JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production}
       JWT_EXPIRES_IN: 7d
       INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-internal-secret-change-in-production}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
-    depends_on:
-      mongodb:
-        condition: service_healthy
     networks:
       - pos-network
     healthcheck:
@@ -73,13 +47,10 @@ services:
       - "4002:4002"
     environment:
       PORT: 4002
-      MONGODB_URI: mongodb://mongodb:27017/pos-products
+      MONGODB_URI: mongodb://host.docker.internal:27017/pos-products
       JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production}
       INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-internal-secret-change-in-production}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
-    depends_on:
-      mongodb:
-        condition: service_healthy
     networks:
       - pos-network
     healthcheck:
@@ -100,13 +71,11 @@ services:
       - "4003:4003"
     environment:
       PORT: 4003
-      MONGODB_URI: mongodb://mongodb:27017/pos-orders
+      MONGODB_URI: mongodb://host.docker.internal:27017/pos-orders
       JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production}
       INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-internal-secret-change-in-production}
       PRODUCT_SERVICE_URL: http://product-service:4002
     depends_on:
-      mongodb:
-        condition: service_healthy
       product-service:
         condition: service_started
     networks:
@@ -129,15 +98,13 @@ services:
       - "4004:4004"
     environment:
       PORT: 4004
-      MONGODB_URI: mongodb://mongodb:27017/pos-payments
+      MONGODB_URI: mongodb://host.docker.internal:27017/pos-payments
       JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production}
       INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-internal-secret-change-in-production}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_replace_with_your_key}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_replace_with_your_secret}
       ORDER_SERVICE_URL: http://order-service:4003
     depends_on:
-      mongodb:
-        condition: service_healthy
       order-service:
         condition: service_started
     networks:
@@ -219,7 +186,7 @@ services:
     container_name: pos-frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "8080:80"
     environment:
       VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY:-pk_test_51S1NFYLPIfygesGkov2r70i1IEDGzrH9bq5UC14G0Kv6YIwolrPq2FWpTzmnKYDgFrKdqabsqvJeRl1cW3mFkXYL00CCJu2JyG}
     depends_on:
