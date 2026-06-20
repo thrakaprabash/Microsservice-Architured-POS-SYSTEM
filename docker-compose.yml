@@ -221,7 +221,7 @@ services:
     ports:
       - "80:80"
     environment:
-      VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY:-pk_test_replace_with_your_key}
+      VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY:-pk_test_51S1NFYLPIfygesGkov2r70i1IEDGzrH9bq5UC14G0Kv6YIwolrPq2FWpTzmnKYDgFrKdqabsqvJeRl1cW3mFkXYL00CCJu2JyG}
     depends_on:
       api-gateway:
         condition: service_started

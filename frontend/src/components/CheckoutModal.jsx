@@ -25,7 +25,7 @@ function CardPaymentForm({ orderId, total, onSuccess, onError }) {
     setLoading(true)
     try {
       const intentRes = await createPaymentIntent(orderId, total)
-      const { clientSecret } = intentRes.data
+      const { clientSecret } = intentRes.data.data
       const cardEl = elements.getElement(CardElement)
       const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: { card: cardEl }
