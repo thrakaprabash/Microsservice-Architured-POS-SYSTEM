@@ -15,16 +15,16 @@ function formatDate(dateStr) {
 }
 
 const STATUS_COLORS = {
-  pending: 'badge-warning',
-  completed: 'badge-success',
-  cancelled: 'badge-danger',
-  refunded: 'badge-info'
+  pending: 'bg-[rgba(245,158,11,0.15)] text-[#fbbf24] border-[rgba(245,158,11,0.3)]',
+  completed: 'bg-[rgba(16,185,129,0.15)] text-[#34d399] border-[rgba(16,185,129,0.3)]',
+  cancelled: 'bg-[rgba(239,68,68,0.15)] text-[#f87171] border-[rgba(239,68,68,0.3)]',
+  refunded: 'bg-[rgba(59,130,246,0.15)] text-[#60a5fa] border-[rgba(59,130,246,0.3)]'
 }
 
 const METHOD_COLORS = {
-  cash: 'badge-success',
-  card: 'badge-info',
-  stripe: 'badge-info'
+  cash: 'bg-[rgba(16,185,129,0.15)] text-[#34d399] border-[rgba(16,185,129,0.3)]',
+  card: 'bg-[rgba(59,130,246,0.15)] text-[#60a5fa] border-[rgba(59,130,246,0.3)]',
+  stripe: 'bg-[rgba(59,130,246,0.15)] text-[#60a5fa] border-[rgba(59,130,246,0.3)]'
 }
 
 function OrderDetailModal({ order, onClose, onStatusChange }) {
@@ -49,44 +49,44 @@ function OrderDetailModal({ order, onClose, onStatusChange }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="modal modal-lg" id="order-detail-modal">
-        <div className="modal-header">
-          <h3>📋 Order Details</h3>
-          <button className="btn-icon" onClick={onClose} id="order-detail-close">×</button>
+    <div className="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] border border-[var(--color-border-subtle)] shadow-[0_8px_32px_rgba(0,0,0,0.5)] w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden" id="order-detail-modal">
+        <div className="flex items-center justify-between p-5 border-b border-[var(--color-border-subtle)] shrink-0 bg-[var(--color-bg-secondary)]">
+          <h3 className="m-0 font-[var(--font-outfit)] text-xl font-bold">📋 Order Details</h3>
+          <button className="w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-white cursor-pointer transition-colors text-lg" onClick={onClose} id="order-detail-close">×</button>
         </div>
-        <div className="modal-body">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+        <div className="p-6 overflow-y-auto">
+          <div className="grid grid-cols-2 gap-4 mb-5">
             <div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Order Number</div>
-              <div style={{ fontWeight: 700, fontFamily: 'Outfit, sans-serif', fontSize: 18 }}>
+              <div className="text-[12px] text-[var(--color-text-muted)] mb-1">Order Number</div>
+              <div className="font-bold font-[var(--font-outfit)] text-[18px]">
                 #{order.orderNumber || order._id?.slice(-8).toUpperCase()}
               </div>
             </div>
             <div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Date</div>
-              <div style={{ fontWeight: 500 }}>{formatDate(order.createdAt)}</div>
+              <div className="text-[12px] text-[var(--color-text-muted)] mb-1">Date</div>
+              <div className="font-medium">{formatDate(order.createdAt)}</div>
             </div>
             <div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Cashier</div>
-              <div style={{ fontWeight: 500 }}>{order.cashier?.name || 'Staff'}</div>
+              <div className="text-[12px] text-[var(--color-text-muted)] mb-1">Cashier</div>
+              <div className="font-medium">{order.cashier?.name || 'Staff'}</div>
             </div>
             <div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>Status</div>
-              <span className={`badge ${STATUS_COLORS[status] || 'badge-default'}`}>
+              <div className="text-[12px] text-[var(--color-text-muted)] mb-1">Status</div>
+              <span className={`inline-block px-2 py-0.5 text-[11px] font-semibold rounded border ${STATUS_COLORS[status] || 'bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] border-[var(--color-border-subtle)]'}`}>
                 {status}
               </span>
             </div>
           </div>
 
           {isAdmin && (
-            <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>Change Status</div>
-              <div style={{ display: 'flex', gap: 8 }}>
+            <div className="mb-5">
+              <div className="text-[12px] text-[var(--color-text-muted)] mb-2">Change Status</div>
+              <div className="flex gap-2">
                 {['pending', 'completed', 'cancelled', 'refunded'].map(s => (
                   <button
                     key={s}
-                    className={`btn btn-sm ${status === s ? 'btn-primary' : 'btn-secondary'}`}
+                    className={`inline-flex items-center justify-center gap-2 px-3.5 py-1.5 text-[13px] font-medium rounded-lg transition-colors cursor-pointer ${status === s ? 'bg-[var(--color-accent-primary)] text-white border-none' : 'bg-[var(--color-bg-hover)] border border-[var(--color-border-color)] text-[var(--color-text-primary)] hover:border-[var(--color-text-muted)]'}`}
                     onClick={() => handleStatusChange(s)}
                     disabled={saving || status === s}
                     id={`status-${s}-btn`}
@@ -98,26 +98,26 @@ function OrderDetailModal({ order, onClose, onStatusChange }) {
             </div>
           )}
 
-          <div className="divider" />
+          <div className="h-[1px] w-full bg-[var(--color-border-subtle)] my-4" />
 
           {/* Items Table */}
-          <div className="table-container">
-            <table className="table">
+          <div className="overflow-x-auto bg-[var(--color-bg-primary)] border border-[var(--color-border-subtle)] rounded-xl">
+            <table className="w-full min-w-[600px] border-collapse text-left text-[14px]">
               <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Price</th>
-                  <th>Qty</th>
-                  <th style={{ textAlign: 'right' }}>Subtotal</th>
+                <tr className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-secondary)]">
+                  <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em]">Item</th>
+                  <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em]">Price</th>
+                  <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em]">Qty</th>
+                  <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em] text-right">Subtotal</th>
                 </tr>
               </thead>
               <tbody>
                 {(order.items || []).map((item, idx) => (
-                  <tr key={idx}>
-                    <td>{item.name || item.product?.name || 'Item'}</td>
-                    <td>{formatLKR(item.price)}</td>
-                    <td>{item.quantity}</td>
-                    <td style={{ textAlign: 'right' }}>
+                  <tr key={idx} className="border-b border-[var(--color-border-subtle)] last:border-0 hover:bg-[var(--color-bg-hover)] transition-colors">
+                    <td className="p-3">{item.name || item.product?.name || 'Item'}</td>
+                    <td className="p-3">{formatLKR(item.price)}</td>
+                    <td className="p-3">{item.quantity}</td>
+                    <td className="p-3 text-right">
                       {formatLKR(item.subtotal || item.price * item.quantity)}
                     </td>
                   </tr>
@@ -126,23 +126,23 @@ function OrderDetailModal({ order, onClose, onStatusChange }) {
             </table>
           </div>
 
-          <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-            <div style={{ minWidth: 200 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, marginBottom: 8 }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Payment Method</span>
-                <span className={`badge ${METHOD_COLORS[order.paymentMethod] || 'badge-default'}`}>
+          <div className="mt-4 flex justify-end">
+            <div className="min-w-[200px]">
+              <div className="flex justify-between text-[14px] mb-2">
+                <span className="text-[var(--color-text-secondary)]">Payment Method</span>
+                <span className={`inline-block px-2 py-0.5 text-[11px] font-semibold rounded border ${METHOD_COLORS[order.paymentMethod] || 'bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] border-[var(--color-border-subtle)]'}`}>
                   {order.paymentMethod || 'N/A'}
                 </span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Outfit, sans-serif', fontSize: 20, fontWeight: 700, color: 'var(--accent-primary)' }}>
+              <div className="flex justify-between font-[var(--font-outfit)] text-[20px] font-bold text-[var(--color-accent-primary)]">
                 <span>Total</span>
                 <span>{formatLKR(order.total)}</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={onClose}>Close</button>
+        <div className="flex items-center justify-end gap-3 p-5 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-secondary)] shrink-0">
+          <button className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-bg-hover)] border border-[var(--color-border-color)] text-[var(--color-text-primary)] hover:border-[var(--color-text-muted)] transition-colors cursor-pointer" onClick={onClose}>Close</button>
         </div>
       </div>
     </div>
@@ -184,18 +184,17 @@ export default function Orders() {
 
   return (
     <div>
-      <div className="page-header">
-        <h1 className="page-title">📋 Orders</h1>
-        <span style={{ color: 'var(--text-muted)', fontSize: 14 }}>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="font-[var(--font-outfit)] text-[28px] font-bold text-white tracking-tight m-0">📋 Orders</h1>
+        <span className="text-[var(--color-text-muted)] text-[14px]">
           {orders.length} order{orders.length !== 1 ? 's' : ''} found
         </span>
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+      <div className="flex gap-3 mb-5 flex-wrap">
         <select
-          className="form-input"
-          style={{ width: 'auto', minWidth: 140 }}
+          className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)] w-auto min-w-[140px]"
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
           id="orders-status-filter"
@@ -208,78 +207,73 @@ export default function Orders() {
         </select>
         <input
           type="date"
-          className="form-input"
-          style={{ width: 'auto' }}
+          className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)] w-auto"
           value={dateFrom}
           onChange={e => setDateFrom(e.target.value)}
           id="orders-date-from"
         />
         <input
           type="date"
-          className="form-input"
-          style={{ width: 'auto' }}
+          className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)] w-auto"
           value={dateTo}
           onChange={e => setDateTo(e.target.value)}
           id="orders-date-to"
         />
-        <button className="btn btn-secondary" onClick={loadOrders} id="orders-refresh-btn">
+        <button className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-bg-hover)] border border-[var(--color-border-color)] text-[var(--color-text-primary)] hover:border-[var(--color-text-muted)] transition-colors cursor-pointer" onClick={loadOrders} id="orders-refresh-btn">
           🔄 Refresh
         </button>
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: 48 }}>
-          <span className="spinner" style={{ width: 32, height: 32, borderWidth: 3 }} />
+        <div className="text-center p-12">
+          <span className="inline-block w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin" />
         </div>
       ) : orders.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">📋</div>
-          <div style={{ fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 4 }}>No orders found</div>
-          <div style={{ fontSize: 13 }}>Orders will appear here after checkout</div>
+        <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+          <div className="text-[64px] mb-4 opacity-50">📋</div>
+          <div className="font-medium text-[var(--color-text-secondary)] mb-1">No orders found</div>
+          <div className="text-[13px] text-[var(--color-text-muted)]">Orders will appear here after checkout</div>
         </div>
       ) : (
-        <div className="table-container">
-          <table className="table">
+        <div className="overflow-x-auto bg-[var(--color-bg-primary)] border border-[var(--color-border-subtle)] rounded-xl">
+          <table className="w-full min-w-[600px] border-collapse text-left text-[14px]">
             <thead>
-              <tr>
-                <th>Order #</th>
-                <th>Cashier</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Method</th>
-                <th>Status</th>
-                <th>Date</th>
+              <tr className="border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-secondary)]">
+                <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em]">Order #</th>
+                <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em]">Cashier</th>
+                <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em]">Items</th>
+                <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em]">Total</th>
+                <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em]">Method</th>
+                <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em]">Status</th>
+                <th className="p-3 font-semibold text-[13px] text-[var(--color-text-secondary)] uppercase tracking-[0.05em]">Date</th>
               </tr>
             </thead>
             <tbody>
               {orders.map(order => (
-                <tr key={order._id} onClick={() => setSelectedOrder(order)} id={`order-row-${order._id}`}>
-                  <td style={{ fontWeight: 700 }}>
+                <tr key={order._id} onClick={() => setSelectedOrder(order)} id={`order-row-${order._id}`} className="border-b border-[var(--color-border-subtle)] last:border-0 hover:bg-[var(--color-bg-hover)] transition-colors cursor-pointer">
+                  <td className="p-3 font-bold">
                     #{order.orderNumber || order._id?.slice(-8).toUpperCase()}
                   </td>
-                  <td>{order.cashier?.name || 'Staff'}</td>
-                  <td>
-                    <span style={{
-                      background: 'var(--bg-hover)', borderRadius: 999,
-                      padding: '2px 10px', fontSize: 12, fontWeight: 600
-                    }}>
+                  <td className="p-3">{order.cashier?.name || 'Staff'}</td>
+                  <td className="p-3">
+                    <span className="bg-[var(--color-bg-hover)] rounded-full px-2.5 py-0.5 text-[12px] font-semibold">
                       {(order.items || []).length} items
                     </span>
                   </td>
-                  <td style={{ fontWeight: 600, color: 'var(--accent-primary)' }}>
+                  <td className="p-3 font-semibold text-[var(--color-accent-primary)]">
                     {formatLKR(order.total)}
                   </td>
-                  <td>
-                    <span className={`badge ${METHOD_COLORS[order.paymentMethod] || 'badge-default'}`}>
+                  <td className="p-3">
+                    <span className={`inline-block px-2 py-0.5 text-[11px] font-semibold rounded border ${METHOD_COLORS[order.paymentMethod] || 'bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] border-[var(--color-border-subtle)]'}`}>
                       {order.paymentMethod || 'N/A'}
                     </span>
                   </td>
-                  <td>
-                    <span className={`badge ${STATUS_COLORS[order.status] || 'badge-default'}`}>
+                  <td className="p-3">
+                    <span className={`inline-block px-2 py-0.5 text-[11px] font-semibold rounded border ${STATUS_COLORS[order.status] || 'bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] border-[var(--color-border-subtle)]'}`}>
                       {order.status || 'pending'}
                     </span>
                   </td>
-                  <td style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
+                  <td className="p-3 text-[var(--color-text-secondary)] text-[13px]">
                     {formatDate(order.createdAt)}
                   </td>
                 </tr>

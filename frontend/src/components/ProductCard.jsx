@@ -19,9 +19,10 @@ function formatLKR(amount) {
 }
 
 function StockBadge({ stock }) {
-  if (stock === 0) return <span className="badge badge-danger">Out of Stock</span>
-  if (stock <= 10) return <span className="badge badge-warning">Low: {stock}</span>
-  return <span className="badge badge-success">{stock} in stock</span>
+  const baseClasses = "inline-block px-2.5 py-1 text-xs font-semibold rounded-full border border-current bg-opacity-10 backdrop-blur-md"
+  if (stock === 0) return <span className={`${baseClasses} text-[var(--color-accent-danger)] bg-[var(--color-accent-danger)]`}>Out of Stock</span>
+  if (stock <= 10) return <span className={`${baseClasses} text-[var(--color-accent-secondary)] bg-[var(--color-accent-secondary)]`}>Low: {stock}</span>
+  return <span className={`${baseClasses} text-[var(--color-accent-primary)] bg-[var(--color-accent-primary)]`}>{stock} in stock</span>
 }
 
 export default function ProductCard({ product, adminMode = false, onEdit, onDelete }) {
@@ -36,15 +37,19 @@ export default function ProductCard({ product, adminMode = false, onEdit, onDele
 
   return (
     <div
-      className={`product-card ${isOutOfStock && !adminMode ? 'out-of-stock' : ''}`}
+      className={`flex flex-col gap-3 p-4 bg-[var(--color-bg-card)] rounded-[var(--radius-md)] border border-[var(--color-border-subtle)] shadow-[0_4px_24px_rgba(0,0,0,0.4)] transition-all relative group ${
+        isOutOfStock && !adminMode
+          ? 'opacity-50 grayscale cursor-not-allowed'
+          : 'cursor-pointer hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(0,0,0,0.5)]'
+      }`}
       onClick={handleClick}
       id={`product-card-${product._id}`}
-      style={{ opacity: isOutOfStock && adminMode ? 0.6 : 1 }}
+      style={{ opacity: isOutOfStock && adminMode ? 0.6 : undefined }}
     >
       {adminMode && (
-        <div className="product-admin-actions">
+        <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity bg-[rgba(30,41,59,0.85)] backdrop-blur-md p-1 rounded-lg border border-[var(--color-border-subtle)] z-10">
           <button
-            className="btn-icon"
+            className="p-2 rounded-[var(--radius-sm)] bg-transparent border border-[var(--color-border-color)] text-[var(--color-text-secondary)] cursor-pointer transition-colors hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text-primary)]"
             onClick={(e) => { e.stopPropagation(); onEdit && onEdit(product) }}
             title="Edit product"
             id={`edit-product-${product._id}`}
@@ -52,11 +57,10 @@ export default function ProductCard({ product, adminMode = false, onEdit, onDele
             ✏️
           </button>
           <button
-            className="btn-icon"
+            className="p-2 rounded-[var(--radius-sm)] bg-transparent border border-[var(--color-border-color)] cursor-pointer transition-colors hover:bg-[var(--color-bg-hover)] hover:text-white text-[var(--color-accent-danger)]"
             onClick={(e) => { e.stopPropagation(); onDelete && onDelete(product) }}
             title="Delete product"
             id={`delete-product-${product._id}`}
-            style={{ color: 'var(--accent-danger)' }}
           >
             🗑️
           </button>
@@ -64,7 +68,7 @@ export default function ProductCard({ product, adminMode = false, onEdit, onDele
       )}
 
       <div
-        className="product-icon-circle"
+        className="w-[80px] h-[80px] rounded-[var(--radius-md)] flex items-center justify-center mx-auto mb-2 shrink-0 overflow-hidden"
         style={{ background: style.bg }}
       >
         {product.imageUrl ? (
@@ -81,9 +85,9 @@ export default function ProductCard({ product, adminMode = false, onEdit, onDele
       </div>
 
       <div>
-        <div className="product-name">{product.name}</div>
+        <div className="font-semibold text-sm leading-snug">{product.name}</div>
         {product.sku && (
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+          <div className="text-[11px] text-[var(--color-text-muted)] mt-0.5">
             SKU: {product.sku}
           </div>
         )}
@@ -91,7 +95,7 @@ export default function ProductCard({ product, adminMode = false, onEdit, onDele
 
       <StockBadge stock={product.stock} />
 
-      <div className="product-price">{formatLKR(product.price)}</div>
+      <div className="text-lg font-bold text-[var(--color-accent-primary)] mt-auto font-[var(--font-outfit)]">{formatLKR(product.price)}</div>
     </div>
   )
 }

@@ -61,25 +61,25 @@ export default function POS() {
   }
 
   return (
-    <div className="pos-layout" style={{ margin: '-24px', height: 'calc(100vh - 0px)' }}>
+    <div className="flex w-full overflow-hidden bg-[var(--color-bg-primary)]" style={{ margin: '-24px', height: 'calc(100vh - 0px)' }}>
       {/* Left: Products */}
-      <div className="pos-left">
+      <div className="flex-[7] flex flex-col min-w-0 border-r border-[var(--color-border-subtle)] h-full overflow-hidden">
         {/* Search + Category Header */}
-        <div style={{ padding: '16px 16px 0', borderBottom: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
-          <div className="search-wrapper" style={{ marginBottom: 12 }}>
-            <span className="search-icon">🔍</span>
+        <div className="px-4 pt-4 border-b border-[var(--color-border-color)] bg-[var(--color-bg-secondary)]">
+          <div className="relative w-full mb-3">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none">🔍</span>
             <input
               type="text"
-              className="form-input search-input"
+              className="pl-10 h-11 bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]"
               placeholder="Search products by name..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               id="pos-search-input"
             />
           </div>
-          <div className="pill-tabs">
+          <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <button
-              className={`pill-tab ${activeCategory === 'all' ? 'active' : ''}`}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap cursor-pointer transition-all border border-[var(--color-border-subtle)] ${activeCategory === 'all' ? 'bg-[var(--color-accent-primary)] border-[var(--color-accent-primary)] text-white shadow-[0_4px_12px_rgba(16,185,129,0.25)]' : 'bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-white'}`}
               onClick={() => setActiveCategory('all')}
               id="category-tab-all"
             >
@@ -88,7 +88,7 @@ export default function POS() {
             {categories.map(cat => (
               <button
                 key={cat._id}
-                className={`pill-tab ${activeCategory === cat._id ? 'active' : ''}`}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap cursor-pointer transition-all border border-[var(--color-border-subtle)] ${activeCategory === cat._id ? 'bg-[var(--color-accent-primary)] border-[var(--color-accent-primary)] text-white shadow-[0_4px_12px_rgba(16,185,129,0.25)]' : 'bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-white'}`}
                 onClick={() => setActiveCategory(cat._id)}
                 id={`category-tab-${cat._id}`}
               >
@@ -96,23 +96,23 @@ export default function POS() {
               </button>
             ))}
           </div>
-          <div style={{ height: 12 }} />
+          <div className="h-3" />
         </div>
 
         {/* Product Grid */}
         {loading ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, gap: 12 }}>
-            <span className="spinner" style={{ width: 32, height: 32, borderWidth: 3 }} />
-            <span style={{ color: 'var(--text-muted)' }}>Loading products...</span>
+          <div className="flex items-center justify-center flex-1 gap-3">
+            <span className="inline-block w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin" />
+            <span className="text-[var(--color-text-muted)]">Loading products...</span>
           </div>
         ) : products.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">📦</div>
-            <div style={{ fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 4 }}>No products found</div>
-            <div style={{ fontSize: 13 }}>Try a different search or category</div>
+          <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+            <div className="text-[64px] mb-4 opacity-50">📦</div>
+            <div className="font-medium text-[var(--color-text-secondary)] mb-1">No products found</div>
+            <div className="text-[13px] text-[var(--color-text-muted)]">Try a different search or category</div>
           </div>
         ) : (
-          <div className="product-grid">
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 md:gap-5 content-start">
             {products.map(product => (
               <ProductCard key={product._id} product={product} />
             ))}
@@ -121,7 +121,7 @@ export default function POS() {
       </div>
 
       {/* Right: Cart */}
-      <div className="pos-right">
+      <div className="flex-[3] min-w-[320px] max-w-[400px] h-full flex flex-col bg-[var(--color-bg-secondary)] shrink-0">
         <Cart onCheckout={() => setShowCheckout(true)} />
       </div>
 
@@ -144,3 +144,4 @@ export default function POS() {
     </div>
   )
 }
+

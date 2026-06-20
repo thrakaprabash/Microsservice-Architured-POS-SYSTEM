@@ -11,17 +11,13 @@ export default function Cart({ onCheckout }) {
   const count = getItemCount()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div className="cart-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: 18, fontWeight: 700 }}>Cart</span>
+    <div className="flex flex-col h-full">
+      <div className="p-4 border-b border-[var(--color-border-subtle)] flex items-center justify-between shrink-0 bg-[var(--color-bg-secondary)]">
+        <div className="flex items-center gap-2">
+          <span className="font-[var(--font-outfit)] text-[18px] font-bold">Cart</span>
           {count > 0 && (
             <span
-              style={{
-                background: 'var(--accent-primary)', color: '#fff',
-                borderRadius: 999, fontSize: 12, fontWeight: 700,
-                padding: '2px 8px'
-              }}
+              className="bg-[var(--color-accent-primary)] text-white rounded-full text-xs font-bold px-2 py-0.5"
             >
               {count}
             </span>
@@ -29,7 +25,7 @@ export default function Cart({ onCheckout }) {
         </div>
         {items.length > 0 && (
           <button
-            className="btn btn-secondary btn-sm"
+            className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 text-[13px] font-medium rounded-lg bg-[var(--color-bg-hover)] border border-[var(--color-border-color)] text-[var(--color-text-primary)] hover:border-[var(--color-text-muted)] transition-colors cursor-pointer"
             onClick={() => useCartStore.getState().clearCart()}
             id="cart-clear-btn"
           >
@@ -38,48 +34,47 @@ export default function Cart({ onCheckout }) {
         )}
       </div>
 
-      <div className="cart-items">
+      <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-2">
         {items.length === 0 ? (
-          <div className="empty-state" style={{ padding: 32 }}>
-            <div className="empty-icon">🛒</div>
-            <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 4 }}>
+          <div className="flex flex-col items-center justify-center text-center p-8 h-full">
+            <div className="text-[48px] mb-4 opacity-50">🛒</div>
+            <div className="text-[14px] font-medium text-[var(--color-text-secondary)] mb-1">
               Your cart is empty
             </div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+            <div className="text-[12px] text-[var(--color-text-muted)]">
               Click on a product to add it
             </div>
           </div>
         ) : (
           items.map(item => (
-            <div key={item.productId} className="cart-item">
-              <div className="cart-item-info">
-                <div className="cart-item-name">{item.name}</div>
-                <div className="cart-item-price">{formatLKR(item.price)} each</div>
+            <div key={item.productId} className="flex items-center gap-3 p-3 bg-[var(--color-bg-card)] rounded-xl border border-[var(--color-border-subtle)]">
+              <div className="flex-1 min-w-0">
+                <div className="text-[13px] font-semibold overflow-hidden text-ellipsis whitespace-nowrap mb-1">{item.name}</div>
+                <div className="text-[11px] text-[var(--color-text-muted)]">{formatLKR(item.price)} each</div>
               </div>
-              <div className="cart-qty-controls">
+              <div className="flex items-center gap-1 bg-[var(--color-bg-primary)] rounded-lg p-0.5 border border-[var(--color-border-subtle)]">
                 <button
-                  className="cart-qty-btn"
+                  className="w-7 h-7 flex items-center justify-center rounded-md border-none bg-transparent text-[var(--color-text-primary)] font-medium cursor-pointer hover:bg-[var(--color-bg-hover)] transition-colors"
                   onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                   id={`qty-minus-${item.productId}`}
                 >
                   −
                 </button>
-                <span className="cart-qty">{item.quantity}</span>
+                <span className="w-6 text-center text-[13px] font-bold">{item.quantity}</span>
                 <button
-                  className="cart-qty-btn"
+                  className="w-7 h-7 flex items-center justify-center rounded-md border-none bg-transparent text-[var(--color-text-primary)] font-medium cursor-pointer hover:bg-[var(--color-bg-hover)] transition-colors"
                   onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                   id={`qty-plus-${item.productId}`}
                 >
                   +
                 </button>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
-                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent-primary)' }}>
+              <div className="flex flex-col items-end gap-1">
+                <span className="text-[13px] font-semibold text-[var(--color-accent-primary)]">
                   {formatLKR(item.subtotal)}
                 </span>
                 <button
-                  className="btn-icon"
-                  style={{ width: 22, height: 22, padding: 0, fontSize: 12, borderColor: 'transparent' }}
+                  className="w-[22px] h-[22px] p-0 text-[12px] rounded border border-transparent bg-transparent text-[var(--color-text-secondary)] cursor-pointer transition-colors hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text-primary)] flex items-center justify-center"
                   onClick={() => removeItem(item.productId)}
                   id={`remove-item-${item.productId}`}
                   title="Remove item"
@@ -92,18 +87,18 @@ export default function Cart({ onCheckout }) {
         )}
       </div>
 
-      <div className="cart-footer">
-        <div className="divider" style={{ margin: '0 0 12px' }} />
-        <div className="cart-total-row">
-          <span className="cart-total-label">Subtotal</span>
-          <span className="cart-total-value">{formatLKR(total)}</span>
+      <div className="p-4 bg-[var(--color-bg-secondary)] border-t border-[var(--color-border-subtle)] shrink-0">
+        <div className="h-[1px] bg-[var(--color-border-subtle)] w-full mb-3" />
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-[13px] text-[var(--color-text-secondary)]">Subtotal</span>
+          <span className="font-semibold text-[14px]">{formatLKR(total)}</span>
         </div>
-        <div className="cart-total-row" style={{ marginBottom: 16 }}>
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, fontSize: 16 }}>Total</span>
-          <span className="cart-grand-total">{formatLKR(total)}</span>
+        <div className="flex justify-between items-center mb-4">
+          <span className="font-[var(--font-outfit)] font-bold text-[16px]">Total</span>
+          <span className="text-[20px] font-bold text-[var(--color-accent-primary)] font-[var(--font-outfit)]">{formatLKR(total)}</span>
         </div>
         <button
-          className="btn btn-primary btn-block btn-lg"
+          className="w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 text-base font-medium rounded-lg bg-[var(--color-accent-primary)] text-white hover:bg-[var(--color-accent-primary-dark)] hover:-translate-y-[1px] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none border-none"
           disabled={items.length === 0}
           onClick={onCheckout}
           id="checkout-btn"
@@ -114,3 +109,4 @@ export default function Cart({ onCheckout }) {
     </div>
   )
 }
+

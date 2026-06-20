@@ -33,48 +33,34 @@ export default function Login() {
   }
 
   return (
-    <div className="login-page">
-      <div className="login-bg" />
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[var(--color-bg-primary)]">
+      <div className="absolute inset-0 z-0 bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-5 pointer-events-none mix-blend-luminosity" />
 
       {/* Floating accent blobs */}
-      <div style={{
-        position: 'absolute', width: 300, height: 300, borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(16,185,129,0.12), transparent)',
-        top: '10%', left: '20%', filter: 'blur(60px)', pointerEvents: 'none'
-      }} />
-      <div style={{
-        position: 'absolute', width: 250, height: 250, borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(59,130,246,0.1), transparent)',
-        bottom: '15%', right: '15%', filter: 'blur(60px)', pointerEvents: 'none'
-      }} />
+      <div className="absolute w-[300px] h-[300px] rounded-full top-[10%] left-[20%] blur-[60px] pointer-events-none bg-[radial-gradient(circle,rgba(16,185,129,0.12),transparent)]" />
+      <div className="absolute w-[250px] h-[250px] rounded-full bottom-[15%] right-[15%] blur-[60px] pointer-events-none bg-[radial-gradient(circle,rgba(59,130,246,0.1),transparent)]" />
 
-      <div className="login-card">
+      <div className="w-full max-w-[420px] bg-[rgba(30,41,59,0.85)] backdrop-blur-xl rounded-2xl border border-[rgba(255,255,255,0.08)] p-8 shadow-[0_8px_32px_rgba(0,0,0,0.5)] z-10 relative">
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{
-            width: 64, height: 64, borderRadius: 16,
-            background: 'linear-gradient(135deg, var(--accent-primary), #059669)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 32, margin: '0 auto 16px',
-            boxShadow: '0 8px 24px rgba(16,185,129,0.35)'
-          }}>
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-accent-primary)] to-[#059669] flex items-center justify-center text-3xl mx-auto mb-4 shadow-[0_8px_24px_rgba(16,185,129,0.35)]">
             ✦
           </div>
-          <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: 28, fontWeight: 800, marginBottom: 6 }}>
+          <h1 className="font-[var(--font-outfit)] text-[28px] font-extrabold mb-1.5">
             POS System
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>
+          <p className="text-[var(--color-text-secondary)] text-[14px]">
             Sign in to your account to continue
           </p>
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
-          <div className="form-group" style={{ marginBottom: 16 }}>
-            <label className="form-label" htmlFor="login-email">Email Address</label>
+          <div className="flex flex-col gap-1.5 mb-4">
+            <label className="text-[13px] font-medium text-[var(--color-text-secondary)]" htmlFor="login-email">Email Address</label>
             <input
               id="login-email"
               type="email"
-              className="form-input"
+              className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]"
               placeholder="you@example.com"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -84,12 +70,12 @@ export default function Login() {
             />
           </div>
 
-          <div className="form-group" style={{ marginBottom: 24 }}>
-            <label className="form-label" htmlFor="login-password">Password</label>
+          <div className="flex flex-col gap-1.5 mb-6">
+            <label className="text-[13px] font-medium text-[var(--color-text-secondary)]" htmlFor="login-password">Password</label>
             <input
               id="login-password"
               type="password"
-              className="form-input"
+              className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]"
               placeholder="Enter your password"
               value={password}
               onChange={e => setPassword(e.target.value)}
@@ -100,13 +86,13 @@ export default function Login() {
 
           <button
             type="submit"
-            className="btn btn-primary btn-block btn-lg"
+            className="w-full inline-flex items-center justify-center gap-2 px-7 py-3.5 text-base font-medium rounded-lg bg-[var(--color-accent-primary)] text-white hover:bg-[var(--color-accent-primary-dark)] hover:-translate-y-[1px] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none border-none"
             disabled={loading}
             id="login-submit-btn"
           >
             {loading ? (
               <>
-                <span className="spinner" style={{ width: 18, height: 18 }} />
+                <span className="inline-block w-[18px] h-[18px] border-2 border-white/20 border-t-white rounded-full animate-spin" />
                 Signing in...
               </>
             ) : (
@@ -115,8 +101,8 @@ export default function Login() {
           </button>
         </form>
 
-        <div style={{ marginTop: 24, textAlign: 'center' }}>
-          <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+        <div className="mt-6 text-center">
+          <p className="text-[12px] text-[var(--color-text-muted)]">
             Smart Point of Sale v1.0 • Secure & Reliable
           </p>
         </div>
@@ -124,3 +110,4 @@ export default function Login() {
     </div>
   )
 }
+

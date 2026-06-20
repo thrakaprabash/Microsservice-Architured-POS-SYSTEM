@@ -62,46 +62,46 @@ function ProductFormModal({ product, categories, onClose, onSave }) {
   })
 
   return (
-    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="modal modal-lg" id="product-form-modal">
-        <div className="modal-header">
-          <h3>{product ? '✏️ Edit Product' : '➕ Add Product'}</h3>
-          <button className="btn-icon" onClick={onClose} id="product-form-close">×</button>
+    <div className="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] border border-[var(--color-border-subtle)] shadow-[0_8px_32px_rgba(0,0,0,0.5)] w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden" id="product-form-modal">
+        <div className="flex items-center justify-between p-5 border-b border-[var(--color-border-subtle)] shrink-0 bg-[var(--color-bg-secondary)]">
+          <h3 className="m-0 font-[var(--font-outfit)] text-xl font-bold">{product ? '✏️ Edit Product' : '➕ Add Product'}</h3>
+          <button className="w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-white cursor-pointer transition-colors text-lg" onClick={onClose} id="product-form-close">×</button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="modal-body">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-              <div className="form-group">
-                <label className="form-label">Name *</label>
-                <input className="form-input" placeholder="Product name" {...field('name')} id="product-name-input" />
-                {errors.name && <span style={{ fontSize: 12, color: 'var(--accent-danger)' }}>{errors.name}</span>}
+          <div className="p-6 overflow-y-auto">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Name *</label>
+                <input className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" placeholder="Product name" {...field('name')} id="product-name-input" />
+                {errors.name && <span className="text-[12px] text-[var(--color-accent-danger)]">{errors.name}</span>}
               </div>
-              <div className="form-group">
-                <label className="form-label">SKU</label>
-                <input className="form-input" placeholder="SKU-001" {...field('sku')} id="product-sku-input" />
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">SKU</label>
+                <input className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" placeholder="SKU-001" {...field('sku')} id="product-sku-input" />
               </div>
-              <div className="form-group">
-                <label className="form-label">Price (LKR) *</label>
-                <input type="number" className="form-input" placeholder="0.00" step="0.01" min="0" {...field('price')} id="product-price-input" />
-                {errors.price && <span style={{ fontSize: 12, color: 'var(--accent-danger)' }}>{errors.price}</span>}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Price (LKR) *</label>
+                <input type="number" className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" placeholder="0.00" step="0.01" min="0" {...field('price')} id="product-price-input" />
+                {errors.price && <span className="text-[12px] text-[var(--color-accent-danger)]">{errors.price}</span>}
               </div>
-              <div className="form-group">
-                <label className="form-label">Category *</label>
-                <select className="form-input" {...field('category')} id="product-category-select">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Category *</label>
+                <select className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" {...field('category')} id="product-category-select">
                   <option value="">Select category</option>
                   {categories.map(c => (
                     <option key={c._id} value={c._id}>{c.icon} {c.name}</option>
                   ))}
                 </select>
-                {errors.category && <span style={{ fontSize: 12, color: 'var(--accent-danger)' }}>{errors.category}</span>}
+                {errors.category && <span className="text-[12px] text-[var(--color-accent-danger)]">{errors.category}</span>}
               </div>
-              <div className="form-group">
-                <label className="form-label">Stock</label>
-                <input type="number" className="form-input" placeholder="0" min="0" {...field('stock')} id="product-stock-input" />
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Stock</label>
+                <input type="number" className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" placeholder="0" min="0" {...field('stock')} id="product-stock-input" />
               </div>
-              <div className="form-group">
-                <label className="form-label">Unit</label>
-                <select className="form-input" {...field('unit')} id="product-unit-select">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Unit</label>
+                <select className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" {...field('unit')} id="product-unit-select">
                   <option value="piece">Piece</option>
                   <option value="kg">Kg</option>
                   <option value="g">Grams</option>
@@ -111,20 +111,20 @@ function ProductFormModal({ product, categories, onClose, onSave }) {
                   <option value="pack">Pack</option>
                 </select>
               </div>
-              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                <label className="form-label">Description</label>
-                <input className="form-input" placeholder="Product description (optional)" {...field('description')} id="product-desc-input" />
+              <div className="flex flex-col gap-1.5 col-span-2">
+                <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Description</label>
+                <input className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" placeholder="Product description (optional)" {...field('description')} id="product-desc-input" />
               </div>
-              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-                <label className="form-label">Image URL</label>
-                <input className="form-input" placeholder="https://example.com/image.jpg" {...field('imageUrl')} id="product-image-input" />
+              <div className="flex flex-col gap-1.5 col-span-2">
+                <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Image URL</label>
+                <input className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" placeholder="https://example.com/image.jpg" {...field('imageUrl')} id="product-image-input" />
               </div>
             </div>
           </div>
-          <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn btn-primary" disabled={saving} id="product-save-btn">
-              {saving ? <span className="spinner" /> : (product ? 'Save Changes' : 'Add Product')}
+          <div className="flex items-center justify-end gap-3 p-5 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-secondary)] shrink-0">
+            <button type="button" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-bg-hover)] border border-[var(--color-border-color)] text-[var(--color-text-primary)] hover:border-[var(--color-text-muted)] transition-colors cursor-pointer" onClick={onClose}>Cancel</button>
+            <button type="submit" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-accent-primary)] text-white hover:bg-[var(--color-accent-primary-dark)] transition-colors border-none cursor-pointer disabled:opacity-50" disabled={saving} id="product-save-btn">
+              {saving ? <span className="inline-block w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : (product ? 'Save Changes' : 'Add Product')}
             </button>
           </div>
         </form>
@@ -142,22 +142,22 @@ function DeleteModal({ product, onClose, onConfirm }) {
     setLoading(false)
   }
   return (
-    <div className="modal-overlay">
-      <div className="modal" id="delete-product-modal">
-        <div className="modal-header">
-          <h3>🗑️ Delete Product</h3>
-          <button className="btn-icon" onClick={onClose}>×</button>
+    <div className="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] border border-[var(--color-border-subtle)] shadow-[0_8px_32px_rgba(0,0,0,0.5)] w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden" id="delete-product-modal">
+        <div className="flex items-center justify-between p-5 border-b border-[var(--color-border-subtle)] shrink-0 bg-[var(--color-bg-secondary)]">
+          <h3 className="m-0 font-[var(--font-outfit)] text-xl font-bold">🗑️ Delete Product</h3>
+          <button className="w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-white cursor-pointer transition-colors text-lg" onClick={onClose}>×</button>
         </div>
-        <div className="modal-body">
-          <p style={{ color: 'var(--text-secondary)' }}>
-            Are you sure you want to delete <strong style={{ color: 'var(--text-primary)' }}>{product.name}</strong>?
+        <div className="p-6 overflow-y-auto">
+          <p className="text-[var(--color-text-secondary)] m-0">
+            Are you sure you want to delete <strong className="text-[var(--color-text-primary)]">{product.name}</strong>?
             This action cannot be undone.
           </p>
         </div>
-        <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn btn-danger" onClick={handleConfirm} disabled={loading} id="confirm-delete-btn">
-            {loading ? <span className="spinner" /> : 'Delete'}
+        <div className="flex items-center justify-end gap-3 p-5 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-secondary)] shrink-0">
+          <button className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-bg-hover)] border border-[var(--color-border-color)] text-[var(--color-text-primary)] hover:border-[var(--color-text-muted)] transition-colors cursor-pointer" onClick={onClose}>Cancel</button>
+          <button className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-accent-danger)] text-white hover:bg-red-600 transition-colors border-none cursor-pointer disabled:opacity-50" onClick={handleConfirm} disabled={loading} id="confirm-delete-btn">
+            {loading ? <span className="inline-block w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : 'Delete'}
           </button>
         </div>
       </div>
@@ -193,27 +193,27 @@ function CategoryFormModal({ category, onClose, onSave }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="modal" id="category-form-modal">
-        <div className="modal-header">
-          <h3>{category ? 'Edit Category' : 'Add Category'}</h3>
-          <button className="btn-icon" onClick={onClose}>×</button>
+    <div className="fixed inset-0 z-[1000] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-[var(--color-bg-card)] rounded-[var(--radius-lg)] border border-[var(--color-border-subtle)] shadow-[0_8px_32px_rgba(0,0,0,0.5)] w-full max-w-md max-h-[90vh] flex flex-col overflow-hidden" id="category-form-modal">
+        <div className="flex items-center justify-between p-5 border-b border-[var(--color-border-subtle)] shrink-0 bg-[var(--color-bg-secondary)]">
+          <h3 className="m-0 font-[var(--font-outfit)] text-xl font-bold">{category ? 'Edit Category' : 'Add Category'}</h3>
+          <button className="w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] border border-[var(--color-border-subtle)] bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-white cursor-pointer transition-colors text-lg" onClick={onClose}>×</button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div className="modal-body">
-            <div className="form-group" style={{ marginBottom: 12 }}>
-              <label className="form-label">Icon (Emoji)</label>
-              <input className="form-input" value={icon} onChange={e => setIcon(e.target.value)} placeholder="📦" maxLength={4} id="cat-icon-input" />
+          <div className="p-6 overflow-y-auto">
+            <div className="flex flex-col gap-1.5 mb-3">
+              <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Icon (Emoji)</label>
+              <input className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" value={icon} onChange={e => setIcon(e.target.value)} placeholder="📦" maxLength={4} id="cat-icon-input" />
             </div>
-            <div className="form-group">
-              <label className="form-label">Name</label>
-              <input className="form-input" value={name} onChange={e => setName(e.target.value)} placeholder="Category name" required id="cat-name-input" />
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Name</label>
+              <input className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" value={name} onChange={e => setName(e.target.value)} placeholder="Category name" required id="cat-name-input" />
             </div>
           </div>
-          <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-            <button type="submit" className="btn btn-primary" disabled={saving} id="cat-save-btn">
-              {saving ? <span className="spinner" /> : 'Save'}
+          <div className="flex items-center justify-end gap-3 p-5 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-secondary)] shrink-0">
+            <button type="button" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-bg-hover)] border border-[var(--color-border-color)] text-[var(--color-text-primary)] hover:border-[var(--color-text-muted)] transition-colors cursor-pointer" onClick={onClose}>Cancel</button>
+            <button type="submit" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-accent-primary)] text-white hover:bg-[var(--color-accent-primary-dark)] transition-colors border-none cursor-pointer disabled:opacity-50" disabled={saving} id="cat-save-btn">
+              {saving ? <span className="inline-block w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : 'Save'}
             </button>
           </div>
         </form>
@@ -280,27 +280,27 @@ export default function Products() {
 
   return (
     <div>
-      <div className="page-header">
-        <h1 className="page-title">📦 Products</h1>
-        <button className="btn btn-primary" onClick={() => setShowAddProduct(true)} id="add-product-btn">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="font-[var(--font-outfit)] text-[28px] font-bold text-white tracking-tight m-0">📦 Products</h1>
+        <button className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-accent-primary)] text-white hover:bg-[var(--color-accent-primary-dark)] transition-colors border-none cursor-pointer" onClick={() => setShowAddProduct(true)} id="add-product-btn">
           ➕ Add Product
         </button>
       </div>
 
       {/* Category Management */}
-      <div className="section-card" style={{ marginBottom: 24 }}>
-        <div className="section-card-header">
-          <span className="section-card-title">🏷️ Categories</span>
-          <div style={{ display: 'flex', gap: 8 }}>
+      <div className="bg-[var(--color-bg-secondary)] border border-[var(--color-border-subtle)] rounded-xl overflow-hidden mb-6">
+        <div className="flex justify-between items-center p-4 border-b border-[var(--color-border-subtle)]">
+          <span className="font-[var(--font-outfit)] text-[16px] font-bold">🏷️ Categories</span>
+          <div className="flex gap-2">
             <button
-              className="btn btn-secondary btn-sm"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 text-[13px] font-medium rounded-lg bg-[var(--color-bg-hover)] border border-[var(--color-border-color)] text-[var(--color-text-primary)] hover:border-[var(--color-text-muted)] transition-colors cursor-pointer"
               onClick={() => setShowCategories(s => !s)}
               id="toggle-categories-btn"
             >
               {showCategories ? '▲ Hide' : '▼ Show'}
             </button>
             <button
-              className="btn btn-primary btn-sm"
+              className="inline-flex items-center justify-center gap-2 px-3.5 py-1.5 text-[13px] font-medium rounded-lg bg-[var(--color-accent-primary)] text-white hover:bg-[var(--color-accent-primary-dark)] transition-colors border-none cursor-pointer"
               onClick={() => setShowAddCategory(true)}
               id="add-category-btn"
             >
@@ -309,26 +309,25 @@ export default function Products() {
           </div>
         </div>
         {showCategories && (
-          <div className="category-list">
+          <div className="p-4 flex flex-wrap gap-2">
             {categories.length === 0 ? (
-              <span style={{ fontSize: 13, color: 'var(--text-muted)', padding: 8 }}>No categories yet</span>
+              <span className="text-[13px] text-[var(--color-text-muted)] p-2">No categories yet</span>
             ) : (
               categories.map(cat => (
-                <div key={cat._id} className="category-chip">
+                <div key={cat._id} className="inline-flex items-center gap-2 bg-[var(--color-bg-primary)] border border-[var(--color-border-color)] rounded-lg px-3 py-2 text-[13px] font-medium shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:border-[var(--color-text-muted)] group">
                   <span>{cat.icon}</span>
                   <span>{cat.name}</span>
-                  <div className="category-chip-actions">
+                  <div className="flex gap-1 ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
-                      className="category-chip-btn"
+                      className="bg-transparent border-none p-0.5 text-[14px] opacity-70 hover:opacity-100 cursor-pointer transition-opacity"
                       onClick={() => setEditCategory(cat)}
                       title="Edit"
                       id={`edit-cat-${cat._id}`}
                     >✏️</button>
                     <button
-                      className="category-chip-btn"
+                      className="bg-transparent border-none p-0.5 text-[14px] opacity-70 hover:opacity-100 cursor-pointer transition-opacity text-[var(--color-accent-danger)]"
                       onClick={() => handleDeleteCategory(cat._id)}
                       title="Delete"
-                      style={{ color: 'var(--accent-danger)' }}
                       id={`delete-cat-${cat._id}`}
                     >🗑️</button>
                   </div>
@@ -340,26 +339,26 @@ export default function Products() {
       </div>
 
       {/* Search + Filter */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-        <div className="search-wrapper" style={{ flex: 1, minWidth: 200 }}>
-          <span className="search-icon">🔍</span>
+      <div className="flex gap-3 mb-4 flex-wrap items-center">
+        <div className="relative flex-1 min-w-[200px]">
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none">🔍</span>
           <input
-            className="form-input search-input"
+            className="pl-10 h-11 bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]"
             placeholder="Search products..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             id="products-search-input"
           />
         </div>
-        <div className="pill-tabs" style={{ flexWrap: 'wrap' }}>
+        <div className="flex gap-2 flex-wrap">
           <button
-            className={`pill-tab ${activeCategory === 'all' ? 'active' : ''}`}
+            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap cursor-pointer transition-all border border-[var(--color-border-subtle)] ${activeCategory === 'all' ? 'bg-[var(--color-accent-primary)] border-[var(--color-accent-primary)] text-white shadow-[0_4px_12px_rgba(16,185,129,0.25)]' : 'bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-white'}`}
             onClick={() => setActiveCategory('all')}
           >All</button>
           {categories.map(cat => (
             <button
               key={cat._id}
-              className={`pill-tab ${activeCategory === cat._id ? 'active' : ''}`}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap cursor-pointer transition-all border border-[var(--color-border-subtle)] ${activeCategory === cat._id ? 'bg-[var(--color-accent-primary)] border-[var(--color-accent-primary)] text-white shadow-[0_4px_12px_rgba(16,185,129,0.25)]' : 'bg-transparent text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-white'}`}
               onClick={() => setActiveCategory(cat._id)}
             >
               {cat.icon} {cat.name}
@@ -369,19 +368,19 @@ export default function Products() {
       </div>
 
       {loading ? (
-        <div style={{ textAlign: 'center', padding: 48 }}>
-          <span className="spinner" style={{ width: 32, height: 32, borderWidth: 3 }} />
+        <div className="text-center p-12">
+          <span className="inline-block w-8 h-8 border-4 border-white/20 border-t-white rounded-full animate-spin" />
         </div>
       ) : filteredProducts.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">📦</div>
-          <div style={{ fontWeight: 500, color: 'var(--text-secondary)', marginBottom: 4 }}>No products found</div>
-          <button className="btn btn-primary" onClick={() => setShowAddProduct(true)} style={{ marginTop: 12 }}>
+        <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+          <div className="text-[64px] mb-4 opacity-50">📦</div>
+          <div className="font-medium text-[var(--color-text-secondary)] mb-1">No products found</div>
+          <button className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-accent-primary)] text-white hover:bg-[var(--color-accent-primary-dark)] transition-colors border-none cursor-pointer mt-3" onClick={() => setShowAddProduct(true)}>
             Add First Product
           </button>
         </div>
       ) : (
-        <div className="product-grid">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-4 md:gap-5">
           {filteredProducts.map(product => (
             <ProductCard
               key={product._id}
