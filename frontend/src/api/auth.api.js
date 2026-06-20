@@ -12,11 +12,14 @@ export const getMe = () =>
 export const register = (data) =>
   api.post('/auth/register', data)
 
+export const getUsers = () =>
+  api.get('/auth/users')
+
+export const createUser = (data) =>
+  api.post('/auth/users', data)
+
 export const updateUser = (userId, data) =>
   api.patch(`/auth/users/${userId}`, data)
 
 export const deactivateUser = (userId) =>
   api.delete(`/auth/users/${userId}`)
-
-export const getUsers = () =>
-  api.get('/auth/users')

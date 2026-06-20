@@ -103,4 +103,38 @@ const deactivateUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllUsers, getUserById, updateUser, deactivateUser };
+/**
+ * POST /users
+ * Create a new user (Admin only).
+ */
+const createUser = async (req, res, next) => {
+  try {
+    const { name, email, password, role } = req.body;
+    
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ success: false, message: 'Email is already registered.' });
+    }
+
+    const user = await User.create({ name, email, password, role });
+
+    return res.status(201).json({
+      success: true,
+      data: {
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          isActive: user.isActive,
+          createdAt: user.createdAt,
+        },
+      },
+      message: 'User created successfully.',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = { getAllUsers, getUserById, updateUser, deactivateUser, createUser };

@@ -76,15 +76,26 @@ export default function Reports() {
         getRevenueByMethod({ start, end })
       ])
 
-      setSummary(summaryRes.data)
-      // Normalize weekly data for recharts
-      const wData = weeklyRes.data.data || weeklyRes.data || []
-      setWeeklyData(Array.isArray(wData) ? wData : [])
-      setTopProducts(topRes.data.products || topRes.data || [])
+      const sData = summaryRes.data.data || {}
+      const wData = weeklyRes.data.data || {}
+      const topP = topRes.data.data?.topProducts || []
+      const mData = methodRes.data.data || {}
 
-      // Normalize pie data
-      const methodData = methodRes.data.data || methodRes.data || []
-      setRevenueByMethod(Array.isArray(methodData) ? methodData : [])
+      setSummary({
+        todayRevenue: sData.today?.revenue || 0,
+        todayOrders: sData.today?.completedOrders || 0,
+        weekRevenue: wData.totals?.totalRevenue || 0,
+        topProduct: topP[0] ? { name: topP[0].name, units: topP[0].quantity } : null
+      })
+
+      const wDays = wData.days || []
+      setWeeklyData(Array.isArray(wDays) ? wDays : [])
+      setTopProducts(Array.isArray(topP) ? topP : [])
+
+      setRevenueByMethod([
+        { name: 'Card', value: mData.card?.revenue || 0 },
+        { name: 'Cash', value: mData.cash?.revenue || 0 }
+      ])
     } catch (err) {
       addToast('error', 'Failed to load report data')
     } finally {

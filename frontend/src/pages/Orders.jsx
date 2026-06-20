@@ -166,7 +166,7 @@ export default function Orders() {
       if (dateFrom) params.dateFrom = dateFrom
       if (dateTo) params.dateTo = dateTo
       const res = await getOrders(params)
-      setOrders(res.data.orders || res.data || [])
+      setOrders(res.data.data?.orders || [])
     } catch (err) {
       addToast('error', 'Failed to load orders')
     } finally {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { getUsers, register, updateUser, deactivateUser } from '../api/auth.api'
+import { getUsers, createUser, updateUser, deactivateUser } from '../api/auth.api'
 import { useUIStore } from '../store/uiStore'
 
 export default function Settings() {
@@ -140,7 +140,7 @@ function AddUserModal({ onClose, onSuccess }) {
     e.preventDefault()
     try {
       setLoading(true)
-      await register(formData)
+      await createUser(formData)
       addToast('success', 'User added successfully')
       onSuccess()
     } catch (err) {

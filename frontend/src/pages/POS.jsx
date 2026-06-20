@@ -21,7 +21,7 @@ export default function POS() {
   const loadCategories = async () => {
     try {
       const res = await getCategories()
-      setCategories(res.data.categories || res.data || [])
+      setCategories(res.data.data?.categories || [])
     } catch (_) {}
   }
 
@@ -32,7 +32,7 @@ export default function POS() {
       if (activeCategory !== 'all') params.category = activeCategory
       if (searchQuery) params.search = searchQuery
       const res = await getProducts(params)
-      setProducts(res.data.products || res.data || [])
+      setProducts(res.data.data?.products || [])
     } catch (err) {
       addToast('error', 'Failed to load products')
     } finally {

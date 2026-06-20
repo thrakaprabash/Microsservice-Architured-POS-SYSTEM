@@ -14,7 +14,7 @@ const app = express();
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cookieParser());
-app.use(express.json({ limit: '10mb' }));
+
 
 // ─── CORS ──────────────────────────────────────────────────────────────────────
 app.use(cors({
@@ -108,11 +108,15 @@ const REPORT_URL  = process.env.REPORT_SERVICE_URL  || 'http://report-service:40
 
 // ─── Proxy Routes ──────────────────────────────────────────────────────────────
 
+// Apply stricter rate limit only to login and register endpoints
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+
 // Auth Service — /api/auth/* → auth-service
-app.use('/api/auth', authLimiter, createProxyMiddleware({
+app.use('/api/auth', createProxyMiddleware({
   target: AUTH_URL,
   changeOrigin: true,
-  pathRewrite: { '^/api/auth': '' },
+  pathRewrite: { '^/': '/' },
   on: { error: onProxyError('Auth Service') },
   logger: console
 }));
@@ -121,14 +125,14 @@ app.use('/api/auth', authLimiter, createProxyMiddleware({
 app.use('/api/products', createProxyMiddleware({
   target: PRODUCT_URL,
   changeOrigin: true,
-  pathRewrite: { '^/api/products': '/products' },
+  pathRewrite: { '^/': '/products/' },
   on: { error: onProxyError('Product Service') }
 }));
 
 app.use('/api/categories', createProxyMiddleware({
   target: PRODUCT_URL,
   changeOrigin: true,
-  pathRewrite: { '^/api/categories': '/categories' },
+  pathRewrite: { '^/': '/categories/' },
   on: { error: onProxyError('Product Service') }
 }));
 
@@ -136,7 +140,7 @@ app.use('/api/categories', createProxyMiddleware({
 app.use('/api/orders', createProxyMiddleware({
   target: ORDER_URL,
   changeOrigin: true,
-  pathRewrite: { '^/api/orders': '/orders' },
+  pathRewrite: { '^/': '/orders/' },
   on: { error: onProxyError('Order Service') }
 }));
 
@@ -144,7 +148,7 @@ app.use('/api/orders', createProxyMiddleware({
 app.use('/api/payments', createProxyMiddleware({
   target: PAYMENT_URL,
   changeOrigin: true,
-  pathRewrite: { '^/api/payments': '/payments' },
+  pathRewrite: { '^/': '/payments/' },
   on: { error: onProxyError('Payment Service') }
 }));
 
@@ -152,7 +156,7 @@ app.use('/api/payments', createProxyMiddleware({
 app.use('/api/reports', createProxyMiddleware({
   target: REPORT_URL,
   changeOrigin: true,
-  pathRewrite: { '^/api/reports': '/reports' },
+  pathRewrite: { '^/': '/reports/' },
   on: { error: onProxyError('Report Service') }
 }));
 

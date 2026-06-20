@@ -5,6 +5,7 @@ const {
   getUserById,
   updateUser,
   deactivateUser,
+  createUser,
 } = require('../controllers/user.controller');
 
 const router = Router();
@@ -14,6 +15,9 @@ router.use(protect, adminOnly);
 
 // GET /users
 router.get('/', getAllUsers);
+
+// POST /users
+router.post('/', createUser);
 
 // GET /users/:id
 router.get('/:id', getUserById);

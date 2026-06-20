@@ -240,8 +240,8 @@ export default function Products() {
     setLoading(true)
     try {
       const [prodRes, catRes] = await Promise.all([getProducts(), getCategories()])
-      setProducts(prodRes.data.products || prodRes.data || [])
-      setCategories(catRes.data.categories || catRes.data || [])
+      setProducts(prodRes.data.data?.products || [])
+      setCategories(catRes.data.data?.categories || [])
     } catch (_) {
       addToast('error', 'Failed to load data')
     } finally {

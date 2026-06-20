@@ -10,22 +10,22 @@ export const createProduct = (data) =>
   api.post('/products', data)
 
 export const updateProduct = (id, data) =>
-  api.put(`/products/${id}`, data)
+  api.patch(`/products/${id}`, data)
 
 export const deleteProduct = (id) =>
   api.delete(`/products/${id}`)
 
 export const getCategories = () =>
-  api.get('/products/categories')
+  api.get('/categories')
 
 export const createCategory = (data) =>
-  api.post('/products/categories', data)
+  api.post('/categories', data)
 
 export const updateCategory = (id, data) =>
-  api.put(`/products/categories/${id}`, data)
+  api.put(`/categories/${id}`, data)
 
 export const deleteCategory = (id) =>
-  api.delete(`/products/categories/${id}`)
+  api.delete(`/categories/${id}`)
 
 export const updateStock = (id, qty, op) =>
   api.patch(`/products/${id}/stock`, { quantity: qty, operation: op })

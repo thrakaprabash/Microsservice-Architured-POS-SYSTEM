@@ -95,7 +95,7 @@ export default function CheckoutModal({ onClose, onSuccess }) {
           cashier: user?._id
         }
         const res = await createOrder(orderData)
-        setCreatedOrder(res.data.order || res.data)
+        setCreatedOrder(res.data.data)
       } catch (err) {
         addToast('error', err.response?.data?.message || 'Failed to create order')
         onClose()

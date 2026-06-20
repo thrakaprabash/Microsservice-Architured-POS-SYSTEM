@@ -6,6 +6,7 @@ import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Toast from './components/Toast'
 import Login from './pages/Login'
+import Register from './pages/Register'
 import POS from './pages/POS'
 import Orders from './pages/Orders'
 import Products from './pages/Products'
@@ -21,7 +22,7 @@ export default function App() {
     if (token && !isAuthenticated) {
       getMe()
         .then(res => {
-          setAuth(res.data.user || res.data, token)
+          setAuth(res.data.data?.user || res.data.user || null, token)
         })
         .catch(() => {
           localStorage.removeItem('pos_token')
@@ -34,6 +35,7 @@ export default function App() {
       <Toast />
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route
           path="/"
           element={
