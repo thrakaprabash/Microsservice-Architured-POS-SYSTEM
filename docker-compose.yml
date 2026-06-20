@@ -1,0 +1,230 @@
+version: '3.9'
+
+# ─── Networks ─────────────────────────────────────────────────────────────────
+networks:
+  pos-network:
+    driver: bridge
+    name: pos-network
+
+# ─── Volumes ──────────────────────────────────────────────────────────────────
+volumes:
+  mongodb-data:
+    driver: local
+
+# ─── Services ─────────────────────────────────────────────────────────────────
+services:
+
+  # ── MongoDB (single instance, multiple databases) ────────────────────────────
+  mongodb:
+    image: mongo:7.0
+    container_name: pos-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      MONGO_INITDB_DATABASE: pos-auth
+    networks:
+      - pos-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # ── Auth Service (port 4001) ─────────────────────────────────────────────────
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: pos-auth-service
+    restart: unless-stopped
+    ports:
+      - "4001:4001"
+    environment:
+      PORT: 4001
+      MONGODB_URI: mongodb://mongodb:27017/pos-auth
+      JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production}
+      JWT_EXPIRES_IN: 7d
+      INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-internal-secret-change-in-production}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - pos-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ── Product Service (port 4002) ──────────────────────────────────────────────
+  product-service:
+    build:
+      context: ./services/product-service
+      dockerfile: Dockerfile
+    container_name: pos-product-service
+    restart: unless-stopped
+    ports:
+      - "4002:4002"
+    environment:
+      PORT: 4002
+      MONGODB_URI: mongodb://mongodb:27017/pos-products
+      JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production}
+      INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-internal-secret-change-in-production}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - pos-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ── Order Service (port 4003) ────────────────────────────────────────────────
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    container_name: pos-order-service
+    restart: unless-stopped
+    ports:
+      - "4003:4003"
+    environment:
+      PORT: 4003
+      MONGODB_URI: mongodb://mongodb:27017/pos-orders
+      JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production}
+      INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-internal-secret-change-in-production}
+      PRODUCT_SERVICE_URL: http://product-service:4002
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+    networks:
+      - pos-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ── Payment Service (port 4004) ──────────────────────────────────────────────
+  payment-service:
+    build:
+      context: ./services/payment-service
+      dockerfile: Dockerfile
+    container_name: pos-payment-service
+    restart: unless-stopped
+    ports:
+      - "4004:4004"
+    environment:
+      PORT: 4004
+      MONGODB_URI: mongodb://mongodb:27017/pos-payments
+      JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production}
+      INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-internal-secret-change-in-production}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_replace_with_your_key}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_replace_with_your_secret}
+      ORDER_SERVICE_URL: http://order-service:4003
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      order-service:
+        condition: service_started
+    networks:
+      - pos-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ── Report Service (port 4005) ───────────────────────────────────────────────
+  report-service:
+    build:
+      context: ./services/report-service
+      dockerfile: Dockerfile
+    container_name: pos-report-service
+    restart: unless-stopped
+    ports:
+      - "4005:4005"
+    environment:
+      PORT: 4005
+      JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production}
+      INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-internal-secret-change-in-production}
+      ORDER_SERVICE_URL: http://order-service:4003
+      PAYMENT_SERVICE_URL: http://payment-service:4004
+    depends_on:
+      order-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+    networks:
+      - pos-network
+
+  # ── API Gateway (port 3000) ──────────────────────────────────────────────────
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: pos-api-gateway
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production}
+      INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-internal-secret-change-in-production}
+      AUTH_SERVICE_URL: http://auth-service:4001
+      PRODUCT_SERVICE_URL: http://product-service:4002
+      ORDER_SERVICE_URL: http://order-service:4003
+      PAYMENT_SERVICE_URL: http://payment-service:4004
+      REPORT_SERVICE_URL: http://report-service:4005
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+    depends_on:
+      auth-service:
+        condition: service_started
+      product-service:
+        condition: service_started
+      order-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+      report-service:
+        condition: service_started
+    networks:
+      - pos-network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ── React Frontend (port 5173 in dev / 80 in Docker) ────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pos-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      VITE_STRIPE_PUBLISHABLE_KEY: ${VITE_STRIPE_PUBLISHABLE_KEY:-pk_test_replace_with_your_key}
+    depends_on:
+      api-gateway:
+        condition: service_started
+    networks:
+      - pos-network

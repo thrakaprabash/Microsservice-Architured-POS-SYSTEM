@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: report-service
+  namespace: pos-system
+  labels:
+    app: report-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: report-service
+  template:
+    metadata:
+      labels:
+        app: report-service
+    spec:
+      containers:
+        - name: report-service
+          image: pos/report-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4005
+          env:
+            - name: PORT
+              value: "4005"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: pos-secrets
+                  key: JWT_SECRET
+            - name: INTERNAL_SERVICE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: pos-secrets
+                  key: INTERNAL_SERVICE_SECRET
+            - name: ORDER_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: pos-config
+                  key: ORDER_SERVICE_URL
+            - name: PAYMENT_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: pos-config
+                  key: PAYMENT_SERVICE_URL
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "150m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: report-service
+  namespace: pos-system
+  labels:
+    app: report-service
+spec:
+  selector:
+    app: report-service
+  type: ClusterIP
+  ports:
+    - port: 4005
+      targetPort: 4005

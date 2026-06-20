@@ -1,0 +1,57 @@
+# NGINX Ingress Controller for POS System
+# Prerequisites: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/cloud/deploy.yaml
+#
+# Access URLs (Docker Desktop):
+#   Frontend: http://pos.local
+#   API:      http://pos.local/api
+#
+# Add to hosts file (C:\Windows\System32\drivers\etc\hosts):
+#   127.0.0.1 pos.local
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pos-ingress
+  namespace: pos-system
+  labels:
+    app: pos-system
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    # CORS headers
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: pos.local
+      http:
+        paths:
+          # API Gateway — all /api/* traffic
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 3000
+          # Health check endpoint
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: api-gateway
+                port:
+                  number: 3000
+          # Frontend — everything else
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
