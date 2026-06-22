@@ -21,9 +21,10 @@ function ProductFormModal({ product, categories, onClose, onSave }) {
     stock: product?.stock ?? '',
     unit: product?.unit || 'piece',
     sku: product?.sku || '',
-    imageUrl: product?.imageUrl || ''
+    image: product?.image || ''
   })
   const [saving, setSaving] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [errors, setErrors] = useState({})
 
   const validate = () => {
@@ -116,14 +117,70 @@ function ProductFormModal({ product, categories, onClose, onSave }) {
                 <input className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" placeholder="Product description (optional)" {...field('description')} id="product-desc-input" />
               </div>
               <div className="flex flex-col gap-1.5 col-span-2">
-                <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Image URL</label>
-                <input className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" placeholder="https://example.com/image.jpg" {...field('imageUrl')} id="product-image-input" />
+                <label className="text-[13px] font-medium text-[var(--color-text-secondary)]">Product Image</label>
+                <div className="flex items-center gap-3">
+                  {form.image && (
+                    <div className="w-12 h-12 rounded-[var(--radius-sm)] border border-[var(--color-border-color)] overflow-hidden shrink-0">
+                      <img src={form.image} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1 flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <label className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-[var(--color-bg-hover)] border border-[var(--color-border-color)] hover:border-[var(--color-accent-primary)] rounded-[var(--radius-sm)] cursor-pointer transition-colors text-[14px] text-[var(--color-text-primary)]">
+                        {uploadingImage ? (
+                          <><span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> Uploading...</>
+                        ) : (
+                          <><span>☁️</span> Upload to Cloudinary</>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0]
+                            if (!file) return
+                            const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+                            const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+                            if (!cloudName || !uploadPreset) {
+                              addToast('error', 'Cloudinary config missing in .env')
+                              return
+                            }
+                            setUploadingImage(true)
+                            try {
+                              const formData = new FormData()
+                              formData.append('file', file)
+                              formData.append('upload_preset', uploadPreset)
+                              const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                                method: 'POST',
+                                body: formData
+                              })
+                              const data = await res.json()
+                              if (data.secure_url) {
+                                setForm(f => ({ ...f, image: data.secure_url }))
+                                addToast('success', 'Image uploaded successfully')
+                              } else {
+                                throw new Error(data.error?.message || 'Upload failed')
+                              }
+                            } catch (err) {
+                              addToast('error', err.message)
+                            } finally {
+                              setUploadingImage(false)
+                            }
+                          }}
+                          disabled={uploadingImage}
+                        />
+                      </label>
+                      <span className="text-[12px] text-[var(--color-text-muted)]">OR</span>
+                    </div>
+                    <input className="bg-[var(--color-bg-primary)] text-white border border-[var(--color-border-color)] rounded-[var(--radius-sm)] px-3.5 py-2.5 text-[14px] w-full outline-none transition-all focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_3px_rgba(16,185,129,0.1)] placeholder:text-[var(--color-text-muted)]" placeholder="https://example.com/image.jpg (Image URL)" {...field('image')} id="product-image-input" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
           <div className="flex items-center justify-end gap-3 p-5 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-secondary)] shrink-0">
             <button type="button" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-bg-hover)] border border-[var(--color-border-color)] text-[var(--color-text-primary)] hover:border-[var(--color-text-muted)] transition-colors cursor-pointer" onClick={onClose}>Cancel</button>
-            <button type="submit" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-accent-primary)] text-white hover:bg-[var(--color-accent-primary-dark)] transition-colors border-none cursor-pointer disabled:opacity-50" disabled={saving} id="product-save-btn">
+            <button type="submit" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-[14px] font-medium rounded-lg bg-[var(--color-accent-primary)] text-white hover:bg-[var(--color-accent-primary-dark)] transition-colors border-none cursor-pointer disabled:opacity-50" disabled={saving || uploadingImage} id="product-save-btn">
               {saving ? <span className="inline-block w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" /> : (product ? 'Save Changes' : 'Add Product')}
             </button>
           </div>

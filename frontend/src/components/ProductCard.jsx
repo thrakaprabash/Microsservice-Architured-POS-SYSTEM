@@ -75,9 +75,9 @@ export default function ProductCard({ product, adminMode = false, onEdit, onDele
         className="w-[80px] h-[80px] rounded-[var(--radius-md)] flex items-center justify-center mx-auto mb-2 shrink-0 overflow-hidden"
         style={{ background: style.bg }}
       >
-        {product.imageUrl ? (
+        {product.image ? (
           <img
-            src={product.imageUrl}
+            src={product.image}
             alt={product.name}
             style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-md)' }}
           />
