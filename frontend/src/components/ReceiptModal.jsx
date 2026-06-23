@@ -33,9 +33,9 @@ export default function ReceiptModal({ paymentData, onClose, onNewSale }) {
             {/* Header */}
             <div className="text-center mb-6">
               <div className="text-3xl mb-2">✦</div>
-              <div className="text-xl font-bold font-sans tracking-wide uppercase mb-1">POS System</div>
+              <div className="text-xl font-bold font-sans tracking-wide uppercase mb-1">PABA SUPERMARKET</div>
               <div className="text-xs text-gray-500 mt-1">
-                Smart Point of Sale
+                Thank you for shopping with us!
               </div>
               <div className="text-xs text-gray-500 mt-1">
                 {formatDateTime(order?.createdAt)}

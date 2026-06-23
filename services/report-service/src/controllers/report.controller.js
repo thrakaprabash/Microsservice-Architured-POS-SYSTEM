@@ -154,7 +154,8 @@ exports.getWeeklyReport = async (req, res, next) => {
 // GET /reports/top-products
 exports.getTopProducts = async (req, res, next) => {
   try {
-    const { startDate, endDate } = getLastNDays(30);
+    const startDate = req.query.startDate || getLastNDays(30).startDate;
+    const endDate = req.query.endDate || getLastNDays(30).endDate;
 
     const orderRes = await serviceClient.get(
       `${process.env.ORDER_SERVICE_URL}/orders/stats/weekly?startDate=${startDate}&endDate=${endDate}`
