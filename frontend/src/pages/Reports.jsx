@@ -72,8 +72,8 @@ export default function Reports() {
       const [summaryRes, weeklyRes, topRes, methodRes] = await Promise.all([
         getSummary(),
         getWeeklyReport(start, end),
-        getTopProducts({ start, end }),
-        getRevenueByMethod({ start, end })
+        getTopProducts({ startDate: start, endDate: end }),
+        getRevenueByMethod({ startDate: start, endDate: end })
       ])
 
       const sData = summaryRes.data.data || {}
@@ -89,7 +89,37 @@ export default function Reports() {
       })
 
       const wDays = wData.days || []
-      setWeeklyData(Array.isArray(wDays) ? wDays : [])
+      
+      // Generate full date range to ensure Recharts renders properly even with sparse data
+      const generateDateRange = (s, e) => {
+        const dates = [];
+        let curr = new Date(s);
+        const endD = new Date(e);
+        while (curr <= endD) {
+          dates.push(curr.toISOString().split('T')[0]);
+          curr.setDate(curr.getDate() + 1);
+        }
+        return dates;
+      };
+
+      const dateRange = generateDateRange(start, end);
+      const formattedDays = dateRange.map(dateStr => {
+        const existingData = wDays.find(d => d.date === dateStr) || { orders: 0, revenue: 0 };
+        const dateObj = new Date(dateStr);
+        const dayLabel = tab === 'month' 
+            ? dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            : tab === 'today'
+              ? 'Today'
+              : dateObj.toLocaleDateString('en-US', { weekday: 'short' });
+        
+        return {
+          ...existingData,
+          date: dateStr,
+          day: dayLabel
+        };
+      });
+
+      setWeeklyData(formattedDays)
       setTopProducts(Array.isArray(topP) ? topP : [])
 
       setRevenueByMethod([
@@ -192,7 +222,7 @@ export default function Reports() {
                       tickFormatter={v => `Rs.${(v/1000).toFixed(0)}k`}
                     />
                     <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="revenue" fill="#10b981" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="revenue" fill="#10b981" radius={[6, 6, 0, 0]} maxBarSize={40} minPointSize={2} />
                   </BarChart>
                 </ResponsiveContainer>
               )}

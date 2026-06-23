@@ -48,7 +48,7 @@ export default function Login() {
             ✦
           </div>
           <h1 className="font-[var(--font-outfit)] text-[28px] font-extrabold mb-1.5">
-            POS System
+            PABA SuperMarket
           </h1>
           <p className="text-[var(--color-text-secondary)] text-[14px]">
             Sign in to your account to continue
@@ -110,7 +110,7 @@ export default function Login() {
             </Link>
           </p>
           <p className="text-[12px] text-[var(--color-text-muted)]">
-            Smart Point of Sale v1.0 • Secure & Reliable
+            PABA SuperMarket POS v1.0 • Secure & Reliable
           </p>
         </div>
       </div>

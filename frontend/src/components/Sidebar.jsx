@@ -39,8 +39,8 @@ export default function Sidebar() {
       <div className="p-6 flex items-center gap-3 border-b border-[var(--color-border-subtle)]">
         <div className="w-10 h-10 rounded-lg bg-[var(--color-accent-primary)] text-white flex items-center justify-center text-xl font-bold shrink-0">✦</div>
         <div>
-          <div className="text-xl font-bold font-[var(--font-outfit)] text-white leading-tight">POS</div>
-          <div className="text-xs text-[var(--color-text-muted)]">Point of Sale</div>
+          <div className="text-xl font-bold font-[var(--font-outfit)] text-white leading-tight">PABA</div>
+          <div className="text-xs text-[var(--color-text-muted)]">SuperMarket</div>
         </div>
       </div>
 
